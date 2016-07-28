@@ -49,7 +49,7 @@ import (
 // Hugo represents the Hugo sites to build. This variable is exported as it
 // is used by at least one external library (the Hugo caddy plugin). We should
 // provide a cleaner external API, but until then, this is it.
-var Hugo hugolib.HugoSites
+var Hugo *hugolib.HugoSites
 
 // userError is an error used to signal different error situations in command handling.
 type commandError struct {
@@ -701,11 +701,11 @@ func getDirList() []string {
 func buildSites(watching ...bool) (err error) {
 	fmt.Println("Started building sites ...")
 	w := len(watching) > 0 && watching[0]
-	return Hugo.Build(w, true)
+	return Hugo.Build(hugolib.BuildCfg{Watching: w, PrintStats: true})
 }
 
 func rebuildSites(events []fsnotify.Event) error {
-	return Hugo.Rebuild(events, true)
+	return Hugo.Rebuild(hugolib.BuildCfg{PrintStats: true}, events...)
 }
 
 // NewWatcher creates a new watcher to watch filesystem events.

@@ -72,8 +72,7 @@ func doTestShortcodeCrossrefs(t *testing.T, relative bool) {
 }
 
 func TestShortcodeHighlight(t *testing.T) {
-	viper.Reset()
-	defer viper.Reset()
+	testCommonResetState()
 
 	if !helpers.HasPygments() {
 		t.Skip("Skip test as Pygments is not installed")
