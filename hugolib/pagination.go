@@ -23,6 +23,7 @@ import (
 	"math"
 	"path"
 	"reflect"
+	"strconv"
 	"strings"
 )
 
@@ -508,16 +509,17 @@ func newPaginator(elements []paginatedElement, total, size int, urlFactory pagin
 }
 
 func newPaginationURLFactory(pathElements ...string) paginationURLFactory {
-	paginatePath := viper.GetString("paginatePath")
-
-	return func(page int) string {
-		var rel string
-		if page == 1 {
-			rel = fmt.Sprintf("/%s/", path.Join(pathElements...))
-		} else {
-			rel = fmt.Sprintf("/%s/%s/%d/", path.Join(pathElements...), paginatePath, page)
-		}
-
-		return helpers.URLizeAndPrep(rel)
-	}
+        return func(page int) string {
+                // e.g. baseURL = "http://www.interdb.jp/test/blog/path" => base[3] = "test/blog/path"
+                base := strings.SplitN(strings.TrimRight(strings.TrimSpace(viper.GetString("BaseURL")), "/"), "/", 4)
+                rel := "/"
+                if len(base) == 4 {
+                        rel += base[3] + "/"
+                }
+                rel += path.Join(pathElements...) + "/"
+                if page != 1 {
+                        rel += viper.GetString("paginatePath") + "/" + strconv.Itoa(page) + "/"
+                }
+                return helpers.URLizeAndPrep(rel)
+        }
 }

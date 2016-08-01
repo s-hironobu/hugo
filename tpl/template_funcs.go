@@ -1840,6 +1840,8 @@ func init() {
 		"mul":          func(a, b interface{}) (interface{}, error) { return helpers.DoArithmetic(a, b, '*') },
 		"ne":           ne,
 		"partial":      partial,
+               	"logging":      Logging,
+                "pagination":   Pagination,
 		"plainify":     plainify,
 		"pluralize":    pluralize,
 		"querify":      querify,

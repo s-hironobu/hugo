@@ -19,6 +19,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/eknkc/amber"
@@ -114,6 +115,37 @@ func partial(name string, contextList ...interface{}) template.HTML {
 		context = contextList[0]
 	}
 	return ExecuteTemplateToHTML(context, "partials/"+name, "theme/partials/"+name)
+}
+
+func Logging(_type string, offset int, path, cgi string) template.HTML {
+        idx := strings.TrimSuffix(strings.TrimPrefix(strings.Replace(strings.TrimSuffix(path, ".md"), "/", "_", -1), "_"), "_")
+        if _type == "URL" && len(strings.Replace(strings.TrimSuffix(strings.TrimPrefix(path, "/"), "/"), "/", "_", -1)) == 0 {
+                idx = "top"
+        }
+
+        ph := "./"
+        for i := 0; i < len(strings.Split(path, "/"))-offset; i++ {
+                ph += "../"
+        }
+        ph += cgi + "?" + idx
+
+        return template.HTML("<script type=\"text/javascript\" src=\"" + ph + "\"></script>")
+}
+
+func Pagination(page int, direction string) template.HTML {
+        offset := 1
+        if direction == "Prev" {
+                offset = -1
+        }
+        p := page + offset
+
+        var ret string
+        if p <= 1 {
+                ret = "../../"
+        } else {
+                ret = "page/" + strconv.Itoa(p)
+        }
+        return template.HTML(ret)
 }
 
 func executeTemplate(context interface{}, w io.Writer, layouts ...string) {
